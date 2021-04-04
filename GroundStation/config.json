@@ -1,0 +1,125 @@
+{
+
+  "labels":[
+    "Data",
+    "Godzina",
+    "Temperatura RTC",
+    "Faza lotu",
+    "Na ziemii",
+    "W locie",
+    "Próbkowanie",
+    "Koniec",
+    "Wysokość GPS",
+    "Średnia GPS",
+    "flaga GPS",
+    "Wysokość Ciśnienie #1",
+    "Średnia Wysokość Ciśnienia #1",
+    "Flaga",
+    "Wysokość Ciśnienie 42",
+    "Średnia Wysokość Ciśnienia #1",
+    "Flaga",
+    "Cisnienie #1",
+    "Średnia Ciśnienia #1",
+    "Temperatura #1",
+    "flaga",
+    "Ciśninie #2",
+    "Średnia Ciśninia #2",
+    "Temperatura #2",
+    "flaga",
+    "Wilgotność #1",
+    "Temperatura #3",
+    "Wilgortność #2",
+    "Temperatura #4",
+    "", "", "", "",
+    "Powód zmiany fazy"
+  ],
+
+  "structure":
+  {
+
+    "phase" : 3,
+
+    "Altitude:" : 8,
+
+    "Temperature": {
+      "names": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+        ],
+      "current": [
+        2,
+        19,
+        23,
+        26,
+        28
+        ]
+    },
+    "Pressure": {
+      "names": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+        ],
+      "current": [
+        11,
+        14,
+        17,
+        21
+      ],
+      "average": [
+        12,
+        15,
+        18,
+        22
+      ]
+    },
+    "Humidity": {
+      "names": [
+        "h1",
+        "h2"
+      ],
+      "current": [
+        25,
+        27
+      ]
+    }
+  },
+
+  "units" : {
+    "temperature" : {
+      "name" : "Celsius",
+      "symbol" : "°C"
+    },
+    "pressure" : {
+      "name" : "Pascal",
+      "symbol" : "Pa"
+    },
+    "humidity" : {
+      "name" : "percent",
+      "symbol" : "%"
+    },
+    "altitude" : {
+      "name" : "meters",
+      "symbol" : "m"
+    }
+  },
+
+  "phases":[
+    "debug/before flight",
+    "start phase",
+    "in flight",
+    "experiment phase",
+    "experiment ended"
+  ],
+
+  "table" : true,
+  "charts" : true,
+  "console" : true,
+  "buttons" : true,
+
+  "maxSize" : 1000
+}
