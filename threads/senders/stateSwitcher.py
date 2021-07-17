@@ -6,14 +6,13 @@ from PyQt5.QtCore import QRunnable, pyqtSlot
 
 class StateSwitcher(QRunnable):
 
-    def __init__(self, expected, udp_ip, udp_port):
+    def __init__(self, expected, sock):
         super(StateSwitcher, self).__init__()
         self.stateToSet = expected
         self.currentState = None
         self.repetitions = 0
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((udp_ip, udp_port))
+        self.socket = sock
 
     @pyqtSlot()
     def run(self):

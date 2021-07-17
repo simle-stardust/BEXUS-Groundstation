@@ -6,15 +6,14 @@ from PyQt5.QtCore import QRunnable, pyqtSlot
 
 class PumpSwitcher(QRunnable):
 
-    def __init__(self, index, expected, udp_ip, udp_port):
+    def __init__(self, index, expected, sock):
         super(PumpSwitcher, self).__init__()
         self.pumpId = index
         self.pumpStateToSet = expected
         self.currentPumpState = None
         self.repetitions = 0
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((udp_ip, udp_port))
+        self.socket = sock
 
     @pyqtSlot()
     def run(self):

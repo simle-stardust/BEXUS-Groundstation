@@ -10,13 +10,14 @@ from pyqtgraph.console import ConsoleWidget
 from widgets.buttons import Buttons
 
 from threads.receivers.tester import Tester
-from threads.receivers.UDPlistener import UDPListener
+from threads.communication import Communication
 
 from threads.blank import Blank
 
 import hjson
 from datetime import date
 import sys
+import socket
 
 
 class MainWindow(QMainWindow):
@@ -32,6 +33,9 @@ class MainWindow(QMainWindow):
 
         with open("config.hjson", "r") as file:
             config = hjson.load(file)
+
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.bind((config['UDP']['ip'], int(config['UDP']['port'])))
 
         self.layout = QVBoxLayout()
 
@@ -71,7 +75,7 @@ class MainWindow(QMainWindow):
             self.console = ConsoleWidget()
             self.tabsBottom.addTab(ConsoleWidget(), 'Console')
         if config['buttons']:
-            self.buttons = Buttons(udp_ip=config['UDP']['ip'], udp_port=config['UDP']['port'])
+            self.buttons = Buttons()
             self.updatableWidgets.append(self.buttons)
             self.tabsBottom.addTab(self.buttons, 'Function Buttons')
 
@@ -83,9 +87,10 @@ class MainWindow(QMainWindow):
 
         self.receiversThreadPool = QThreadPool()
 
-        self.testing()
-        self.blanking()
-        #self.listening(config['UDP']['ip'], config['UDP']['port'])
+        #self.testing()
+        #self.blanking()
+
+        self.listening()
 
         del config
 
@@ -104,10 +109,10 @@ class MainWindow(QMainWindow):
         tester.signals.result.connect(self.updateGUI)
         self.receiversThreadPool.start(tester)
 
-    def listening(self, ip, port):
-        listener = UDPListener(ip, port)
-        listener.signals.list.connect(self.update)
-        listener.signals.string.connect(self.printToFile)
+    def communicate(self):
+        comms = Communication(udp_ip=)
+        listener.signals.input_list.connect(self.update)
+        listener.signals.input_string.connect(self.printToFile)
         self.receiversThreadPool.start(listener)
 
     def blanking(self):
