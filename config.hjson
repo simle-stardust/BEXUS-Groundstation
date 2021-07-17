@@ -33,14 +33,17 @@
     "", "", "", "",
     "Powód zmiany fazy"
   ],
-  #Data structure for display
-  "structure":
+  #Basic information display
+  "basics":
   {
-    #Do not change name of these two!
-    "phase" : 3,
-    "time" : 1,
-    #(It's in the top left corner. It was made to display current altitude but can be used to something else but it's not recommended.)
+    #Do not change name of these!
     "Altitude" : 8,
+    "phase" : 3,
+    "time" : 1
+  },
+  #Data structure for sensors readings display:
+  "sensors":
+  {
     #Change anything you want but keep the pattern!
     "Temperature": {
       "names": [
@@ -59,7 +62,7 @@
         ]
     },
     "Pressure": {
-      "names": [
+      "name": [
         "p1",
         "p2",
         "p3",
@@ -89,7 +92,34 @@
       ]
     }
   },
-  #Please, keep the pattern and name units exactly the same (except case, because it is case insensitive) as in data structure above!
+  #Data structure for mechanisms statuses display:
+  "mechanisms":
+  {
+    #Change anything you want but keep the pattern!
+    "Valves": {
+      "name": [
+        "v1",
+        "v2",
+        "v3"
+        ],
+      "status": [
+        10,
+        13,
+        16
+        ]
+    },
+    "Pumps": {
+      "name": [
+        "p1",
+        "p2"
+        ],
+      "status": [
+        20,
+        24
+      ]
+    }
+  },
+  #Please, keep the pattern and name units exactly the same (except case, because it is case insensitive) as in sensors data structure above!
   "units" : {
     "temperature" : {
       "name" : "Celsius",
@@ -108,6 +138,17 @@
       "symbol" : "m"
     }
   },
+  #Please, keep the pattern and name categories exactly the same (except case, because it is case insensitive) as in mechanisms data structure above!
+  "statuses": {
+    "valves": [
+      "opened",
+      "closed"
+    ],
+    "pumps": [
+      "stopped",
+      "working"
+    ]
+  },
   #Phases of the experiment:
   "phases":[
     "debug/before flight",
@@ -123,6 +164,7 @@
   "buttons" : true,
   #What is the maximum size of the table? (0 = unlimited)
   "maxSize" : 1000,
+  #Network configuration:
   "UDP": {
   "ip" : "127.0.0.1",
   "port" : 5005
