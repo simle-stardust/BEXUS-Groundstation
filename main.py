@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
             self.console = ConsoleWidget()
             self.tabsBottom.addTab(ConsoleWidget(), 'Console')
         if config['buttons']:
-            self.buttons = Buttons()
+            self.buttons = Buttons(udp_ip=config['UDP']['ip'], udp_port=config['UDP']['port'])
             self.updatableWidgets.append(self.buttons)
             self.tabsBottom.addTab(self.buttons, 'Function Buttons')
 
