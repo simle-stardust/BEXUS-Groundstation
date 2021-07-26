@@ -37,6 +37,9 @@ class MainWindow(QMainWindow):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((config['UDP']['ip'], int(config['UDP']['port'])))
 
+        self.udp_ip = config['UDP']['ip']
+        self.udp_port = int(config['UDP']['port'])
+
         self.layout = QVBoxLayout()
 
         self.updatableWidgets = []
@@ -75,7 +78,7 @@ class MainWindow(QMainWindow):
             self.console = ConsoleWidget()
             self.tabsBottom.addTab(ConsoleWidget(), 'Console')
         if config['buttons']:
-            self.buttons = Buttons()
+            self.buttons = Buttons(sock=self.socket)
             self.updatableWidgets.append(self.buttons)
             self.tabsBottom.addTab(self.buttons, 'Function Buttons')
 
@@ -90,7 +93,7 @@ class MainWindow(QMainWindow):
         #self.testing()
         #self.blanking()
 
-        self.listening()
+        self.communicate()
 
         del config
 
@@ -110,10 +113,10 @@ class MainWindow(QMainWindow):
         self.receiversThreadPool.start(tester)
 
     def communicate(self):
-        comms = Communication(udp_ip=)
-        listener.signals.input_list.connect(self.update)
-        listener.signals.input_string.connect(self.printToFile)
-        self.receiversThreadPool.start(listener)
+        comms = Communication(self.socket, 60)
+        comms.signals.input_list.connect(self.updateGUI)
+        comms.signals.input_string.connect(self.printToFile)
+        self.receiversThreadPool.start(comms)
 
     def blanking(self):
         blanker = Blank()

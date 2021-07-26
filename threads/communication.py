@@ -3,6 +3,7 @@ import time
 
 from PyQt5.QtCore import QRunnable, pyqtSlot, QObject, pyqtSignal
 
+from threads.receivers import UDPlistener
 
 class Communication(QObject):
 
@@ -10,15 +11,14 @@ class Communication(QObject):
     input_string = pyqtSignal(str)
 
 
-class Communication(QRunnable):
+class Communication(UDPlistener.UDPListener):
 
-    def __init__(self, udp_ip, udp_port, interval):
-        super(UDPListener, self).__init__()
+    def __init__(self, sock, interval):
+        super(UDPlistener.UDPListener, self).__init__()
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((udp_ip, int(udp_port)))
+        self.socket = sock
 
-        self.signals = UDPListenerSignals()
+        self.signals = UDPlistener.UDPListenerSignals()
 
         self.pingerFlag = False
         self.stateSwitchFlag = False
@@ -39,14 +39,14 @@ class Communication(QRunnable):
         self.currentState = None
 
         self.valveId = None
-        self valveStateToSet = None
+        self.valveStateToSet = None
         self.currentValveState = None
 
         self.pumpId = None
-        self pumpStateToSet = None
+        self.pumpStateToSet = None
         self.currenPumpState = None
 
-
+        self.buffer = ""
 
     @pyqtSlot()
     def run(self):
@@ -54,41 +54,51 @@ class Communication(QRunnable):
         received_last = None
         while True:
             received_new = self.socket.recvfrom(1024)
-            print(received_new)
-            self.signals.input_list.emit(list(received_new.split(",")))
-            self.signals.input_string.emit(received_new)
+            self.buffer = self.buffer + received_new[0].decode()
+
+            if "@" in self.buffer and ";" in self.buffer:
+
+                received_new_list = list(self.buffer[self.buffer.find("@")+1 : self.buffer.find(";")].split(","))
+                print(received_new_list)
+                print(len(received_new_list))
+                # only update data when all required fields are present
+                if len(received_new_list) == 64:
+                    self.signals.input_list.emit(received_new_list)
+                    self.signals.input_string.emit(self.buffer)
+                self.buffer=""
 
             if self.pingerFlag:
                 self.ping()
 
-            if received_new != received_last
+            if received_new != received_last:
                 if self.stateSwitchFlag:
                     self.switchState()
                 if self.valveSwitchFlag:
                     self.switchValve()
                 if self.pumpSwitchFlag:
-                    self.switchState()
+                    self.switchPump()
 
             received_last = received_new
 
     
-    def pinger():
+    def pinger(self):
         if time.time() - self.lastPingTime >= self.pingInterval:
-            self.socket.send(bytes("ping()"))
+            self.socket.send(bytes("ping", encoding='utf8'))
     
-    def switchState():
-        self.socket.send(bytes('setState(' + str(self.stateToSet) + ')'))
+    def switchState(self):
+        self.socket.send(bytes('setState_' + str(self.stateToSet), encoding='utf8'))
         if self.stateToSet != self.currentState or self.stateSwitchRepetitions <= self.maxRepetitions:
             self.stateSwitchFlag = False
             self.stateSwitchRepetitions = 0
 
-    def switchValve():
-        self.socket.send(bytes('setValve(' + str(self.valveId) + str(self.valveStateToSet) + ')'))
-        if self.valveStateToSet != self.currentValveState or self.valveSwitchRepetitions <= self.maxRepetitions
+    def switchValve(self):
+        self.socket.send(bytes('setValve_' + str(self.valveId) + str(self.valveStateToSet)), encoding='utf8')
+        if self.valveStateToSet != self.currentValveState or self.valveSwitchRepetitions <= self.maxRepetitions:
             self.valveSwitchFlag = False
             self.valveSwitchRepetitions = 0
-    def switchPump()
-        self.socket.send(bytes('setPump(' + str(self.pumpId) + ', ' + str(self.pumpStateToSet) + ')'))
+            
+    def switchPump(self):
+        self.socket.send(bytes('setPump_' + str(self.pumpId) + '_' + str(self.pumpStateToSet)), encoding='utf8')
         if self.pumpStateToSet != self.currentPumpState or self.pumpSwitchRepetitions <= self.maxRepetitions:
             self.pumpSwitchFlag = False
             self.pumpSwitchRepetitions = 0

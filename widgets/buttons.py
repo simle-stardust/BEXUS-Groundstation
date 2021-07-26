@@ -13,7 +13,7 @@ import socket
 
 class Buttons(QWidget):
 
-    def __init__(self, *args, udp_ip, udp_port, **kwargs):
+    def __init__(self, *args, sock, **kwargs):
         super(Buttons, self).__init__(*args, **kwargs)
 
         self.fontTitle = QLabel().font()
@@ -115,8 +115,7 @@ class Buttons(QWidget):
         self.sendersThreadPool = QThreadPool()
         self.pinger = None
 
-        self.udpIP = udp_ip
-        self.udpPort = udp_port
+        self.socket = sock
 
     def updateGUI(self, data):
         if not self.setStateButton.isEnabled():
@@ -135,14 +134,14 @@ class Buttons(QWidget):
                 self.pumpStateBox.setEnabled(True)
 
     def singlePing(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.bind((self.udpIP, self.udpPort))
-        sock.send(bytes("ping()"))
+        #sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        #sock.bind((self.udpIP, self.udpPort))
+        self.socket.send(bytes("ping()", encoding='utf8'))
         print("ping()")
 
     def startPinging(self):
         if (self.autoPingCheck.isChecked()):
-            self.pinger = Pinger(t=self.intervalBox.value(), udp_ip=self.udpIP, udp_port=self.udpPort)
+            self.pinger = Pinger(t=self.intervalBox.value(), sock=self.socket)
             self.sendersThreadPool.start(self.pinger)
         else:
             self.pinger.ifPing = False
