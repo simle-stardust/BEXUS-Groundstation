@@ -83,7 +83,7 @@ class MainWindow(QMainWindow):
             self.console = ConsoleWidget()
             self.tabsBottom.addTab(ConsoleWidget(), 'Console')
         if config['buttons']:
-            self.buttons = Buttons(socket=self.sock_tx, udp_ip_tx=self.ip_tx, udp_port_tx=self.port_tx)
+            self.buttons = Buttons(socket=self.sock_tx, udp_ip_tx=self.ip_tx, udp_port_tx=self.port_tx, phases=config['phases'], valves=config['mechanisms']['Valves']['name'], valvestatuses=config['statuses']['valves'], pumps=config['mechanisms']['Pumps']['name'])
             self.updatableWidgets.append(self.buttons)
             self.tabsBottom.addTab(self.buttons, 'Function Buttons')
 

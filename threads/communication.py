@@ -59,20 +59,24 @@ class Communication(UDPlistener.UDPListener):
         received_last = None
         while True:
             received_new = self.sock_rx.recvfrom(1024)
-            self.buffer = self.buffer + received_new[0].decode()
 
+            self.buffer = self.buffer + received_new[0].decode()
             print(self.buffer)
 
             if "@" in self.buffer and ";" in self.buffer:
 
                 received_new_list = list(self.buffer[self.buffer.find("@")+1 : self.buffer.find(";")].split(","))
-                print(received_new_list)
-                print(len(received_new_list))
-                # only update data when all required fields are present
-                if len(received_new_list) == 65:
-                    self.signals.input_list.emit(self.createList(received_new_list))
-                    self.signals.input_string.emit(self.buffer + "\r")
-                self.buffer=""
+                if len(received_new_list) == 1:
+                    #error, flush the buffer up to "@"
+                    self.buffer=self.buffer[self.buffer.find("@"):]
+                else:
+                    print(received_new_list)
+                    print(len(received_new_list))
+                    # only update data when all required fields are present
+                    if len(received_new_list) == 65:
+                        self.signals.input_list.emit(self.createList(received_new_list))
+                        self.signals.input_string.emit(self.buffer + "\r")
+                    self.buffer=""
 
             if self.pingerFlag:
                 self.ping()

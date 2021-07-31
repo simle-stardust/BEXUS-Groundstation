@@ -21,6 +21,9 @@ class Charts(QWidget):
         self.data = []
         self.isAvg = []
 
+        self.firstTimestampRx = False 
+        self.firstTimestamp = 0
+
         self.time = [0]
         self.timeAvg = [0]
         self.timeIndex = time_index
@@ -69,6 +72,11 @@ class Charts(QWidget):
 
     def updateGUI(self, data):
 
+
+        if self.firstTimestamp == False:
+            self.firstTimestampRx = data[self.timeIndex]
+            self.firstTimestamp = True
+
         # cutting out excess of chart
         t = len(self.time)
         w = self.geometry().width() / 3
@@ -82,7 +90,7 @@ class Charts(QWidget):
                 self.time.pop(0)
 
         # adding new data from input
-        self.time.append(data[self.timeIndex])
+        self.time.append(data[self.timeIndex] - self.firstTimestampRx)
         self.timeAvg.clear()
         self.timeAvg.extend([self.time[0], self.time[-1]])
 
