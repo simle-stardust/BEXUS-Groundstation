@@ -17,7 +17,6 @@ from threads.blank import Blank
 import hjson
 from datetime import date
 import sys
-import socket
 
 
 class MainWindow(QMainWindow):
@@ -33,12 +32,6 @@ class MainWindow(QMainWindow):
 
         with open("config.hjson", "r") as file:
             config = hjson.load(file)
-
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((config['UDP']['ip'], int(config['UDP']['port'])))
-
-        self.udp_ip = config['UDP']['ip']
-        self.udp_port = int(config['UDP']['port'])
 
         self.layout = QVBoxLayout()
 
@@ -78,7 +71,7 @@ class MainWindow(QMainWindow):
             self.console = ConsoleWidget()
             self.tabsBottom.addTab(ConsoleWidget(), 'Console')
         if config['buttons']:
-            self.buttons = Buttons(sock=self.socket)
+            self.buttons = Buttons()
             self.updatableWidgets.append(self.buttons)
             self.tabsBottom.addTab(self.buttons, 'Function Buttons')
 
@@ -90,10 +83,7 @@ class MainWindow(QMainWindow):
 
         self.receiversThreadPool = QThreadPool()
 
-        #self.testing()
-        #self.blanking()
-
-        self.communicate()
+        self.communicate(ip=config['UDP']['ip'], port=config['UDP']['port'], mechs=config['mechanisms'], status=list(config['basics'])[1])
 
         del config
 
@@ -112,9 +102,9 @@ class MainWindow(QMainWindow):
         tester.signals.result.connect(self.updateGUI)
         self.receiversThreadPool.start(tester)
 
-    def communicate(self):
-        comms = Communication(self.socket, 60)
-        comms.signals.input_list.connect(self.updateGUI)
+    def communicate(self, ip, port, mechs, status):
+        comms = Communication(udp_ip=ip, udp_port=port, max_reps=10, mechanisms=mechs, state=status)
+        comms.signals.input_list.connect(self.update)
         comms.signals.input_string.connect(self.printToFile)
         self.receiversThreadPool.start(comms)
 

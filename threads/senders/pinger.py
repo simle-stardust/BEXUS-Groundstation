@@ -16,6 +16,6 @@ class Pinger(QRunnable):
     @pyqtSlot()
     def run(self):
         while self.ifPing:
-            self.socket.send(bytes("ping()", encoding='utf8'))
+            self.socket.send(bytes("ping()"))
             print("ping()")
             time.sleep(float(self.interval))

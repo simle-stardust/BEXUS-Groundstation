@@ -101,4 +101,4 @@ class Mechanisms(QWidget):
 
     def updateGUI(self, data):
         for u in range(len(self.labels)):
-            self.labels[u].setText(self.statuses[self.statusTypes[u]][int(data[self.indeces[u]])])
+            self.labels[u].setText(self.statuses[self.statusTypes[u]][data[self.indeces[u]]])
