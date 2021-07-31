@@ -1,6 +1,8 @@
 import socket
 import time
 
+from datetime import datetime
+
 from PyQt5.QtCore import QRunnable, pyqtSlot, QObject, pyqtSignal
 
 from threads.receivers import UDPlistener
@@ -59,17 +61,17 @@ class Communication(UDPlistener.UDPListener):
             received_new = self.sock_rx.recvfrom(1024)
             self.buffer = self.buffer + received_new[0].decode()
 
-            #print(self.buffer)
+            print(self.buffer)
 
             if "@" in self.buffer and ";" in self.buffer:
 
                 received_new_list = list(self.buffer[self.buffer.find("@")+1 : self.buffer.find(";")].split(","))
-                #print(received_new_list)
-                #print(len(received_new_list))
+                print(received_new_list)
+                print(len(received_new_list))
                 # only update data when all required fields are present
-                if len(received_new_list) == 64:
-                    self.signals.input_list.emit(received_new_list)
-                    self.signals.input_string.emit(self.buffer)
+                if len(received_new_list) == 65:
+                    self.signals.input_list.emit(self.createList(received_new_list))
+                    self.signals.input_string.emit(self.buffer + "\r")
                 self.buffer=""
 
             if self.pingerFlag:
@@ -107,3 +109,24 @@ class Communication(UDPlistener.UDPListener):
         if self.pumpStateToSet != self.currentPumpState or self.pumpSwitchRepetitions <= self.maxRepetitions:
             self.pumpSwitchFlag = False
             self.pumpSwitchRepetitions = 0
+
+    def createList(self, list_to_convert):        
+        for i in range (2, len(list_to_convert)):
+            list_to_convert[i] = float(list_to_convert[i])
+
+        date = list_to_convert[0].split('/')
+        timestamp = list_to_convert[1].split('_')
+
+        year = int(date[0])
+        month = int(date[1])
+        day = int(date[2])
+        hour = int(timestamp[0])
+        min = int(timestamp[1])
+        sec = int(timestamp[2])
+
+        dt = datetime(year, month, day, hour, min, sec)
+
+        list_to_convert[0] = dt.timestamp()
+        list_to_convert[1] = dt.timestamp()
+
+        return list_to_convert
