@@ -165,8 +165,12 @@
   #What is the maximum size of the table? (0 = unlimited)
   "maxSize" : 1000,
   #Network configuration:
-  "UDP": {
+  "UDP_rx": {
   "ip" : "127.0.0.1",
   "port" : 58616
+  }
+  "UDP_tx": {
+  "ip" : "127.0.0.1",
+  "port" : 53397
   }
 }

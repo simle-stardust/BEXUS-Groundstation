@@ -23,6 +23,5 @@ class UDPListener(QRunnable):
     def run(self):
         while True:
             received_temp = self.socket.recvfrom(1024)
-            print(received_temp)
             self.signals.input_list.emit(list(received_temp.split(",")))
             self.signals.input_string.emit(received_temp)

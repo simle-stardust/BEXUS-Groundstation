@@ -13,7 +13,7 @@ import socket
 
 class Buttons(QWidget):
 
-    def __init__(self, *args, sock, **kwargs):
+    def __init__(self, *args, socket, udp_ip_tx, udp_port_tx, **kwargs):
         super(Buttons, self).__init__(*args, **kwargs)
 
         self.fontTitle = QLabel().font()
@@ -115,7 +115,9 @@ class Buttons(QWidget):
         self.sendersThreadPool = QThreadPool()
         self.pinger = None
 
-        self.socket = sock
+        self.socket = socket
+        self.tx_ip = udp_ip_tx
+        self.tx_port = udp_port_tx
 
     def updateGUI(self, data):
         if not self.setStateButton.isEnabled():
@@ -136,12 +138,12 @@ class Buttons(QWidget):
     def singlePing(self):
         #sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #sock.bind((self.udpIP, self.udpPort))
-        self.socket.send(bytes("ping()", encoding='utf8'))
-        print("ping()")
+        self.socket.sendto(bytes("ping", encoding='utf8'), (self.tx_ip, self.tx_port))
+        print("ping")
 
     def startPinging(self):
         if (self.autoPingCheck.isChecked()):
-            self.pinger = Pinger(t=self.intervalBox.value(), sock=self.socket)
+            self.pinger = Pinger(t=self.intervalBox.value(), sock=self.socket, ip_tx=self.tx_ip, port_tx=self.tx_port)
             self.sendersThreadPool.start(self.pinger)
         else:
             self.pinger.ifPing = False
@@ -149,18 +151,18 @@ class Buttons(QWidget):
     def setStateButtonOnClick(self):
         self.setStateButton.setEnabled(False)
         self.experimentStateBox.setEnabled(False)
-        state_switcher = StateSwitcher(expected=self.experimentStateBox.currentIndex(), udp_ip=self.udpIP, udp_port=self.udpPort)
+        state_switcher = StateSwitcher(expected=self.experimentStateBox.currentIndex(), sock=self.socket, ip_tx=self.tx_ip, port_tx=self.tx_port)
         self.sendersThreadPool.start(state_switcher)
 
     def setValveButtonOnClick(self):
         self.setValveButton.setEnabled(False)
         self.valveBox.setEnabled(False)
         self.valveStateBox.setEnabled(False)
-        valve_switcher = ValveSwitcher(index=self.valveBox.currentIndex(), expected=self.valveStateBox.currentIndex(), udp_ip=self.udpIP, udp_port=self.udpPort)
+        valve_switcher = ValveSwitcher(index=self.valveBox.currentIndex(), expected=self.valveStateBox.currentIndex(), sock=self.socket, ip_tx=self.tx_ip, port_tx=self.tx_port)
         self.sendersThreadPool.start(valve_switcher)
 
     def setPumpButtonOnClick(self):
         self.pumpBox.setEnabled(False)
         self.pumpStateBox.setEnabled(False)
-        pump_switcher = PumpSwitcher(index=self.pumpBox.currentIndex(), expected=self.pumpStateBox.value(), udp_ip=self.udpIP, udp_port=self.udpPort)
+        pump_switcher = PumpSwitcher(index=self.pumpBox.currentIndex(), expected=int(self.pumpStateBox.value()), sock=self.socket, ip_tx=self.tx_ip, port_tx=self.tx_port)
         self.sendersThreadPool.start(pump_switcher)

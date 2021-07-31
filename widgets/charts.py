@@ -82,17 +82,17 @@ class Charts(QWidget):
                 self.time.pop(0)
 
         # adding new data from input
-        self.time.append(data[self.timeIndex])
+        self.time.append(int(data[self.timeIndex]))
         self.timeAvg.clear()
-        self.timeAvg.extend([self.time[0], self.time[-1]])
+        self.timeAvg.extend([int(self.time[0]), int(self.time[-1])])
 
         for i in range(len(self.data)):
             for j in range(len(self.data[i])):
                 if self.isAvg[i][j]:
                     self.data[i][j].clear()
-                    self.data[i][j].extend([data[self.indices[i][j]], data[self.indices[i][j]]])
+                    self.data[i][j].extend([int(data[self.indices[i][j]]), int(data[self.indices[i][j]])])
                 else:
-                    self.data[i][j].append(data[self.indices[i][j]])
+                    self.data[i][j].append(int(data[self.indices[i][j]]))
 
         # updating lines
         for i in range(len(self.lines)):

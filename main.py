@@ -34,11 +34,16 @@ class MainWindow(QMainWindow):
         with open("config.hjson", "r") as file:
             config = hjson.load(file)
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((config['UDP']['ip'], int(config['UDP']['port'])))
+        self.sock_rx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock_tx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        self.udp_ip = config['UDP']['ip']
-        self.udp_port = int(config['UDP']['port'])
+        self.ip_rx = config['UDP_rx']['ip']
+        self.port_rx = int(config['UDP_rx']['port'])
+
+        self.ip_tx = config['UDP_tx']['ip']
+        self.port_tx = int(config['UDP_tx']['port'])
+        
+        self.sock_rx.bind((self.ip_rx, self.port_rx))
 
         self.layout = QVBoxLayout()
 
@@ -78,7 +83,7 @@ class MainWindow(QMainWindow):
             self.console = ConsoleWidget()
             self.tabsBottom.addTab(ConsoleWidget(), 'Console')
         if config['buttons']:
-            self.buttons = Buttons(sock=self.socket)
+            self.buttons = Buttons(socket=self.sock_tx, udp_ip_tx=self.ip_tx, udp_port_tx=self.port_tx)
             self.updatableWidgets.append(self.buttons)
             self.tabsBottom.addTab(self.buttons, 'Function Buttons')
 
@@ -100,7 +105,7 @@ class MainWindow(QMainWindow):
     def updateGUI(self, data):
         for widget in self.updatableWidgets:
             widget.updateGUI(data)
-        print(self.receiversThreadPool.activeThreadCount())
+        #print(self.receiversThreadPool.activeThreadCount())
 
     def printToFile(self, data):
         file = open(self.logFile, 'a+')
@@ -113,7 +118,7 @@ class MainWindow(QMainWindow):
         self.receiversThreadPool.start(tester)
 
     def communicate(self):
-        comms = Communication(self.socket, 60)
+        comms = Communication(self.sock_rx, self.sock_tx, self.ip_tx, self.port_tx, 60)
         comms.signals.input_list.connect(self.updateGUI)
         comms.signals.input_string.connect(self.printToFile)
         self.receiversThreadPool.start(comms)
