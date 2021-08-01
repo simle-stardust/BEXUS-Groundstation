@@ -1,0 +1,223 @@
+{
+  #List of labels of incoming data
+  "labels":[
+    "RTC date",
+    "RTC time",
+    "RTC temp",
+    "RTC code",
+    "Ext press val",
+    "Ext press avg",
+    "Ext press temp",
+    "Ext press flag",
+    "Int press val",
+    "Int press avg",
+    "Int press temp",
+    "Int press flag",
+    "GPS alt",
+    "GPS alt avg",
+    "GPS flal",
+    "Alt ext press",
+    "Alt ext press avg",
+    "Alt ext press flag",
+    "Alt int press",
+    "Alt int press avg",
+    "Alt int press flag",
+    "Int DHT22 temp",
+    "Int DHT22 hum",
+    "Int DHT22 err",
+    "Ext DHT22 temp",
+    "Ext DHT22 hum",
+    "Ext DHT22 err",
+    "Mech DHT22 temp",
+    "Mech DHT22 hum",
+    "Mech DHT22 err",
+    "DS18[0] temp",
+    "DS18[1] temp",
+    "DS18[2] temp",
+    "DS18[3] temp",
+    "DS18[4] temp",
+    "DS18[5] temp",
+    "DS18[6] temp",
+    "DS18[7] temp",
+    "DS18[8] temp",
+    "DS18[9] temp",
+    "DS18[10] temp",
+    "DS18[11] temp",
+    "DS18[12] temp",
+    "DS18[13] temp",
+    "DS18[14] temp",
+    "DS18[15] temp",
+    "DS18[16] temp",
+    "DS18[17] temp",
+    "DS18[18] temp",
+    "DS18[19] temp",
+    "P#1 PWM",
+    "P#2 PWM",
+    "Heaters PWM",
+    "Exp state",
+    "Valve 1 state",
+    "Valve 2 state",
+    "Valve 3 state",
+    "Valve 4 state",
+    "Valve 5 state",
+    "Valve 6 state",
+    "Valve 7 state",
+    "P#1 meas sig",
+    "P#2 meas sig",
+    "Heaters sig",
+    "Time since ping"
+  ],
+  #Basic information display
+  "basics":
+  {
+    #Do not change name of these!
+    "Altitude" : 12,
+    "phase" : 53,
+    "time" : 1
+  },
+  #Data structure for sensors readings display:
+  "sensors":
+  {
+    #Change anything you want but keep the pattern!
+    "Temperature": {
+      "names": [
+        "RTC temp",
+        "Ext press",
+        "Int press",
+        "Ext DHT22",
+        "Int DHT22",
+        "Mech DHT22"
+        # TODO: Add ds18b20??
+        ],
+      "current": [
+        2,
+        6,
+        10,
+        24,
+        21,
+        27
+        ]
+    },
+    "Pressure": {
+      "name": [
+        "Internal",
+        "External"
+        ],
+      "current": [
+        8,
+        4
+      ],
+      "average": [
+        9,
+        5
+      ]
+    },
+    "Humidity": {
+      "names": [
+        "Ext DHT22",
+        "Int DHT22",
+        "Mech DHT22"
+      ],
+      "current": [
+        25,
+        22,
+        28
+      ]
+    }
+  },
+  #Data structure for mechanisms statuses display:
+  "mechanisms":
+  {
+    #Change anything you want but keep the pattern!
+    "Valves": {
+      "name": [
+        "v1",
+        "v2",
+        "v3"
+        "v4",
+        "v5",
+        "v6",
+        "v7"
+        ],
+      "status": [
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60
+        ]
+    },
+    "Pumps": {
+      "name": [
+        "p1",
+        "p2"
+        ],
+      "control signal": [
+        50,
+        51
+      ]
+      "measured signal": [
+        61,
+        62
+      ]
+    }
+  },
+  #Please, keep the pattern and name units exactly the same (except case, because it is case insensitive) as in sensors data structure above!
+  "units" : {
+    "temperature" : {
+      "name" : "Celsius",
+      "symbol" : "°C"
+    },
+    "pressure" : {
+      "name" : "Pascal",
+      "symbol" : "Pa"
+    },
+    "humidity" : {
+      "name" : "percent",
+      "symbol" : "%"
+    },
+    "altitude" : {
+      "name" : "meters",
+      "symbol" : "m"
+    }
+  },
+  #Please, keep the pattern and name categories exactly the same (except case, because it is case insensitive) as in mechanisms data structure above!
+  "statuses": {
+    "valves": [
+      "opened",
+      "closed"
+    ],
+    "pumps": [
+      "stopped",
+      "working"
+    ]
+  },
+  #Phases of the experiment:
+  "phases":[
+    "debug/before flight",
+    "start phase",
+    "in flight",
+    "experiment phase",
+    "experiment ended"
+  ],
+  #Which elements to load?
+  "table" : true,
+  "charts" : true,
+  "console" : true,
+  "buttons" : true,
+  #What is the maximum size of the table? (0 = unlimited)
+  "maxSize" : 1000,
+  #Time since last ping:
+  "lastPing": 64,
+  #Network configuration:
+  "UDP_rx": {
+  "ip" : "192.168.1.100",
+  "port" : 64341
+  },
+  "UDP_tx": {
+  "ip" : "192.168.1.105",
+  "port" : 2137
+  }
+}
