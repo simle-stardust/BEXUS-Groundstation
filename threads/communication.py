@@ -59,9 +59,8 @@ class Communication(UDPlistener.UDPListener):
         received_last = None
         while True:
             received_new = self.sock_rx.recvfrom(1024)
-
-            self.buffer = self.buffer + received_new[0].decode()
-            print(self.buffer)
+            print(received_new)
+            self.buffer = self.buffer + received_new.decode()
 
             if "@" in self.buffer and ";" in self.buffer:
 
