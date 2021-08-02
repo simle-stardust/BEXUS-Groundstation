@@ -15,19 +15,23 @@ class CommunicationSignals(QObject):
 
 class Communication(QRunnable):
 
-    def __init__(self, ip_rx, port_rx, ip_tx, port_tx, max_reps, max_command_time, buffer_len, last_ping_time_limit, mechanisms, state):
+    def __init__(self, ip_rx, port_rx, ip_tx, port_tx, max_reps, max_command_time, buffer_len, last_ping_time, mechanisms, state):
         super(Communication, self).__init__()
 
         self.sock_rx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        print('vvvvvvvvvvvvvv')
+        print(ip_rx)
+        print('- - - - - - -')
+        print(port_rx)
+        print('vvvvvvvvvvvvvv')
         self.sock_rx.bind((ip_rx, int(port_rx)))
         self.sock_tx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_rx.bind((ip_tx, int(port_tx)))
 
         self.ip_tx = ip_tx
         self.port_tx = port_tx
 
         self.bufferLenght = buffer_len
-        self.lastPingTimeLimit = last_ping_time_limit
+        self.lastPingTime = last_ping_time
 
         self.signals = CommunicationSignals()
 
@@ -36,6 +40,7 @@ class Communication(QRunnable):
                                            valveSwitchFlag=False,
                                            pumpSwitchFlag=False,
                                            pingOnce=False,
+                                           isCommsOnline=False,
                                            pingInterval=0,
                                            stateToSet=0,
                                            valveId=0,
@@ -60,6 +65,8 @@ class Communication(QRunnable):
 
         self.maxRepetitions = max_reps
 
+        self.buffer = ""
+
 
     @pyqtSlot()
     def run(self):
@@ -70,7 +77,7 @@ class Communication(QRunnable):
             received = self.sock_rx.recvfrom(1024)
 
             self.buffer = self.buffer + received[0].decode()
-            print(self.buffer)
+            #print(self.buffer)
 
             if "@" in self.buffer and ";" in self.buffer:
 
@@ -79,11 +86,12 @@ class Communication(QRunnable):
                     #error, flush the buffer up to "@"
                     self.buffer=self.buffer[self.buffer.find("@"):]
                 else:
-                    print(received_new_list)
-                    print(len(received_new_list))
+                    #print(received_new_list)
+                    #print(len(received_new_list))
                     # only update data when all required fields are present
                     if len(received_new_list) == self.bufferLenght:
-                        self.signals.input_list.emit(self.createList(received_new_list))
+                        received_new_list = self.createList(received_new_list)
+                        self.signals.input_list.emit(received_new_list)
                         self.signals.input_string.emit(self.buffer + "\r")
                     self.buffer=""
 
@@ -92,14 +100,14 @@ class Communication(QRunnable):
             if self.commsData.pingerFlag:
                 self.pinger()
 
-            if received_new_list != received_last_list:
+            if received_new_list != received_last_list and len(received_new_list) == self.bufferLenght:
                 if self.commsData.stateSwitchFlag:
-                    self.switchState(received_new_list[self.experimentState])
+                    self.switchState(received_new_list[int(self.experimentState)])
                 if self.commsData.valveSwitchFlag:
-                    self.switchValve(received_new_list[self.mechanisms['Valves']['status']])
+                    self.switchValve(received_new_list[int(self.mechanisms['Valves']['status'])])
                 if self.commsData.pumpSwitchFlag:
-                    self.switchState(received_new_list[self.mechanisms['Valves']['status']])
-                if int(received_new_list[self.lastPingTimeLimit]) > 30:
+                    self.switchState(received_new_list[int(self.mechanisms['Valves']['status'])])
+                if int(received_new_list[int(self.lastPingTime)]) > 30:
                     self.commsData.isCommsOnline = False
                 else:
                     self.commsData.isCommsOnline = True

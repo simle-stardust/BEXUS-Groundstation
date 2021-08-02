@@ -8,7 +8,7 @@ from datastructures.communicationdata import CommunicationData
 
 class Buttons(QWidget):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, phases, valves, valvestatuses, pumps, **kwargs):
         super(Buttons, self).__init__(*args, **kwargs)
 
         self.fontTitle = QLabel().font()
@@ -29,6 +29,8 @@ class Buttons(QWidget):
         self.experimentStateBox = QComboBox()
         self.layoutSetterState.addWidget(self.experimentStateBox)
         self.setStateButton = QPushButton("SET")
+        for phase in phases:
+            self.experimentStateBox.addItem(phase)
 
         self.setStateButton.clicked.connect(self.setStateButtonOnClick)
 
@@ -46,6 +48,10 @@ class Buttons(QWidget):
         self.valveStateBox = QComboBox()
         self.layoutSetterValve.addWidget(self.valveStateBox)
         self.setValveButton = QPushButton("SET")
+        for valve in valves:
+            self.valveBox.addItem(valve)
+        for valvestatus in valvestatuses:
+            self.valveStateBox.addItem(valvestatus)
 
         self.setValveButton.clicked.connect(self.setValveButtonOnClick)
 
@@ -64,6 +70,8 @@ class Buttons(QWidget):
         self.pumpStateBox.setMaximum(255)
         self.layoutSetterPump.addWidget(self.pumpStateBox)
         self.setPumpButton = QPushButton("SET")
+        for pump in pumps:
+            self.pumpBox.addItem(pump)
 
         self.setPumpButton.clicked.connect(self.setPumpButtonOnClick)
 

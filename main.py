@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
             self.console = ConsoleWidget()
             self.tabsBottom.addTab(ConsoleWidget(), 'Console')
         if config['buttons']:
-            self.buttons = Buttons()
+            self.buttons = Buttons(phases=config['phases'], valves=config['mechanisms']['Valves']['name'], valvestatuses=config['statuses']['valves'], pumps=config['mechanisms']['Pumps']['name'])
             self.updatableWidgets.append(self.buttons)
             self.tabsBottom.addTab(self.buttons, 'Function Buttons')
 
@@ -80,28 +80,29 @@ class MainWindow(QMainWindow):
 
         self.receiversThreadPool = QThreadPool()
 
-        self.comms = self.communicate(ip_rx=config['UDP_rx']['ip'], port_rx=config['UDP_rx']['port'], ip_tx=config['UDP_tx']['ip'], port_tx=config['UDP_tx']['port'], mechs=config['mechanisms'], status=list(config['basics'])[1])
+        self.comms = None
+        self.communicate(ip_rx=config['UDP_rx']['ip'], port_rx=config['UDP_rx']['port'], ip_tx=config['UDP_tx']['ip'], port_tx=config['UDP_tx']['port'],buffer=len(list(config['labels'])), mechs=config['mechanisms'], status=config['basics']['Altitude'], last_ping=int(config['lastPing']))
 
         del config
 
     def updateGUI(self, data):
         for widget in self.updatableWidgets:
-            widget.updateGUI(data)
             if type(widget) is Buttons:
-                widget.updateGUI(self.comms.commsData)
+                widget.updateGUI(new_comms_data=self.comms.commsData)
                 self.comms.commsData = widget.commsData
+            else:
+                widget.updateGUI(data)
 
     def printToFile(self, data):
         file = open(self.logFile, 'a+')
         file.write(data)
         file.close()
 
-    def communicate(self, ip_rx, port_rx, ip_tx, port_tx, mechs, status):
-        comms = Communication(ip_rx=ip_rx, port_rx=port_rx, ip_tx=ip_tx, port_tx=port_tx, max_reps=10, mechanisms=mechs, state=status, max_command_time=20)
-        comms.signals.input_list.connect(self.updateGUI)
-        comms.signals.input_string.connect(self.printToFile)
-        self.receiversThreadPool.start(comms)
-        return comms
+    def communicate(self, ip_rx, port_rx, ip_tx, port_tx, mechs, status, buffer, last_ping):
+        self.comms = Communication(ip_rx=ip_rx, port_rx=port_rx, ip_tx=ip_tx, port_tx=port_tx, max_reps=10, mechanisms=mechs, state=status, max_command_time=20, buffer_len=buffer, last_ping_time=last_ping)
+        self.comms.signals.input_list.connect(self.updateGUI)
+        self.comms.signals.input_string.connect(self.printToFile)
+        self.receiversThreadPool.start(self.comms)
 
 
 def test():

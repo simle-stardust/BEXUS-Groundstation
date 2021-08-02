@@ -76,4 +76,4 @@ class Display(QWidget):
 
     def updateGUI(self, data):
         self.labelAltitudeCurrent.setText(str(data[self.indeces[0]]) + self.altitudeUnitSymbol)
-        self.labelPhaze.setText(self.phases[data[self.indeces[1]]] + ' ')
+        self.labelPhaze.setText(self.phases[int(data[self.indeces[1]])] + ' ')
