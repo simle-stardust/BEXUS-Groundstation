@@ -17,7 +17,6 @@ from threads.blank import Blank
 import hjson
 from datetime import date
 import sys
-import socket
 
 
 class MainWindow(QMainWindow):
@@ -95,10 +94,7 @@ class MainWindow(QMainWindow):
 
         self.receiversThreadPool = QThreadPool()
 
-        #self.testing()
-        #self.blanking()
-
-        self.communicate()
+        self.communicate(ip=config['UDP']['ip'], port=config['UDP']['port'], mechs=config['mechanisms'], status=list(config['basics'])[1])
 
         del config
 

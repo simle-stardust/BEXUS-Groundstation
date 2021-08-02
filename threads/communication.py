@@ -1,19 +1,20 @@
 import socket
 import time
+from datastructures.communicationdata import CommunicationData
 
 from datetime import datetime
 
 from PyQt5.QtCore import QRunnable, pyqtSlot, QObject, pyqtSignal
 
-from threads.receivers import UDPlistener
 
-class Communication(QObject):
+class CommunicationSignals(QObject):
 
     input_list = pyqtSignal(list)
     input_string = pyqtSignal(str)
+    comms_data = pyqtSignal(CommunicationData)
 
 
-class Communication(UDPlistener.UDPListener):
+class Communication(QRunnable):
 
     def __init__(self, sock_rx, sock_tx, ip_tx, port_tx, interval):
         super(UDPlistener.UDPListener, self).__init__()
@@ -23,35 +24,32 @@ class Communication(UDPlistener.UDPListener):
         self.ip_tx = ip_tx 
         self.port_tx = port_tx
 
-        self.signals = UDPlistener.UDPListenerSignals()
+        self.signals = CommunicationSignals()
 
-        self.pingerFlag = False
-        self.stateSwitchFlag = False
-        self.valveSwitchFlag = False
-        self.pumpSwitchFlag = False
-
-        self.pingInterval = interval
-        self.lastPingTime = time.time()
+        self.commsData = CommunicationData(pingerFlag=False,
+                                           stateSwitchFlag=False,
+                                           valveSwitchFlag=False,
+                                           pumpSwitchFlag=False,
+                                           pingOnce=False,
+                                           pingInterval=0,
+                                           stateToSet=0,
+                                           valveId=0,
+                                           valveStateToSet=0,
+                                           pumpId=0,
+                                           pumpStateToSet=0)
 
         self.pingRepetitions = 0
         self.stateSwitchRepetitions = 0
         self.valveSwitchRepetitions = 0
         self.pumpSwitchRepetitions = 0
 
-        self.maxRepetitions = 10
+        self.mechanisms = mechanisms
+        self.experimentState = state
 
-        self.stateToSet = None
-        self.currentState = None
+        self.lastPingTime = time.time()
 
-        self.valveId = None
-        self.valveStateToSet = None
-        self.currentValveState = None
+        self.maxRepetitions = max_reps
 
-        self.pumpId = None
-        self.pumpStateToSet = None
-        self.currenPumpState = None
-
-        self.buffer = ""
 
     @pyqtSlot()
     def run(self):
@@ -78,19 +76,25 @@ class Communication(UDPlistener.UDPListener):
                         self.signals.input_string.emit(self.buffer + "\r")
                     self.buffer=""
 
-            if self.pingerFlag:
+            if self.commsData.pingOnce:
                 self.ping()
+            if self.commsData.pingerFlag:
+                self.pinger()
 
             if received_new != received_last:
-                if self.stateSwitchFlag:
-                    self.switchState()
-                if self.valveSwitchFlag:
-                    self.switchValve()
-                if self.pumpSwitchFlag:
-                    self.switchPump()
+                if self.commsData.stateSwitchFlag:
+                    self.switchState(received_to_list[self.experimentState])
+                if self.commsData.valveSwitchFlag:
+                    self.switchValve(received_to_list[self.mechanisms['Valves']['status']])
+                if self.commsData.pumpSwitchFlag:
+                    self.switchState(received_to_list[self.mechanisms['Valves']['status']])
+                self.signals.comms_data.emit(self.commsData)
 
             received_last = received_new
 
+    def ping(self):
+        self.socket.send(bytes("ping()"))
+        self.commsData.pingOnce = False
     
     def pinger(self):
         if time.time() - self.lastPingTime >= self.pingInterval:

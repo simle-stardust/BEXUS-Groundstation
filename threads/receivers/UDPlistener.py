@@ -11,11 +11,11 @@ class UDPListenerSignals(QObject):
 
 class UDPListener(QRunnable):
 
-    def __init__(self, sock):
+    def __init__(self, udp_ip, udp_port):
         super(UDPListener, self).__init__()
 
-        #self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket = sock
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.bind((udp_ip, int(udp_port)))
 
         self.signals = UDPListenerSignals()
 

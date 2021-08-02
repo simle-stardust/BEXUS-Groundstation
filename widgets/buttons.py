@@ -1,19 +1,18 @@
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QThreadPool
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QCheckBox, QDoubleSpinBox
 
-from threads.senders.pinger import Pinger
-from threads.senders.stateSwitcher import StateSwitcher
-from threads.senders.valveSwitcher import ValveSwitcher
-from threads.senders.pumpSwitcher import PumpSwitcher
-
-import socket
+from datastructures.communicationdata import CommunicationData
 
 
 class Buttons(QWidget):
 
+<<<<<<< HEAD
     def __init__(self, *args, socket, udp_ip_tx, udp_port_tx, phases, valves, valvestatuses, pumps, **kwargs):
+=======
+    def __init__(self, *args, **kwargs):
+>>>>>>> b78b8ac850eeeca99a303e56abf47cd5feffdfe9
         super(Buttons, self).__init__(*args, **kwargs)
 
         self.fontTitle = QLabel().font()
@@ -120,6 +119,7 @@ class Buttons(QWidget):
 
         self.setLayout(self.layoutMain)
 
+<<<<<<< HEAD
         self.sendersThreadPool = QThreadPool()
         self.pinger = None
 
@@ -130,20 +130,38 @@ class Buttons(QWidget):
     def updateGUI(self, data):
         if not self.setStateButton.isEnabled():
             if int(self.experimentStateBox.currentIndex()) == data[self.experimentStateBox.currentIndex()]:
+=======
+        self.commsData = CommunicationData(pingerFlag=False,
+                                           stateSwitchFlag=False,
+                                           valveSwitchFlag=False,
+                                           pumpSwitchFlag=False,
+                                           pingOnce=False,
+                                           pingInterval=0,
+                                           stateToSet=0,
+                                           valveId=0,
+                                           valveStateToSet=0,
+                                           pumpId=0,
+                                           pumpStateToSet=0)
+
+    def updateGUI(self):
+        if self.setStateButton.isEnabled():
+            if self.commsData.stateSwitchFlag:
+>>>>>>> b78b8ac850eeeca99a303e56abf47cd5feffdfe9
                 self.setStateButton.setEnabled(True)
                 self.experimentStateBox.setEnabled(True)
-        if not self.setValveButton.isEnabled():
-            if int(self.valveStateBox.currentIndex()) == data[self.valveBox.currentIndex()]:
+        if self.setValveButton.isEnabled():
+            if self.commsData.valveSwitchFlag:
                 self.setValveButton.setEnabled(True)
                 self.valveBox.setEnabled(True)
                 self.valveStateBox.setEnabled(True)
-        if not self.setPumpButton.isEnabled():
-            if int(self.pumpStateBox.value()) == data[self.pumpBox.currentIndex()]:
+        if self.setPumpButton.isEnabled():
+            if self.commsData.pumpSwitchFlag:
                 self.setPumpButton.setEnabled(True)
                 self.pumpBox.setEnabled(True)
                 self.pumpStateBox.setEnabled(True)
 
     def singlePing(self):
+<<<<<<< HEAD
         #sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #sock.bind((self.udpIP, self.udpPort))
         self.socket.sendto(bytes("ping", encoding='utf8'), (self.tx_ip, self.tx_port))
@@ -155,22 +173,46 @@ class Buttons(QWidget):
             self.sendersThreadPool.start(self.pinger)
         else:
             self.pinger.ifPing = False
+=======
+        self.commsData.pingOnce = True
+
+    def startPinging(self):
+        if self.autoPingCheck.isChecked():
+            self.commsData.pingerFlag = True
+>>>>>>> b78b8ac850eeeca99a303e56abf47cd5feffdfe9
 
     def setStateButtonOnClick(self):
         self.setStateButton.setEnabled(False)
         self.experimentStateBox.setEnabled(False)
+<<<<<<< HEAD
         state_switcher = StateSwitcher(expected=self.experimentStateBox.currentIndex(), sock=self.socket, ip_tx=self.tx_ip, port_tx=self.tx_port)
         self.sendersThreadPool.start(state_switcher)
+=======
+        self.commsData.stateToSet = self.experimentStateBox.currentIndex()
+        self.commsData.stateSwitchFlag = True
+>>>>>>> b78b8ac850eeeca99a303e56abf47cd5feffdfe9
 
     def setValveButtonOnClick(self):
         self.setValveButton.setEnabled(False)
         self.valveBox.setEnabled(False)
         self.valveStateBox.setEnabled(False)
+<<<<<<< HEAD
         valve_switcher = ValveSwitcher(index=self.valveBox.currentIndex()+1, expected=self.valveStateBox.currentIndex(), sock=self.socket, ip_tx=self.tx_ip, port_tx=self.tx_port)
         self.sendersThreadPool.start(valve_switcher)
+=======
+        self.commsData.valveId = self.valveBox.currentIndex()
+        self.commsData.valveStateToSet = self.valveStateBox.currentIndex()
+        self.commsData.valveSwitchFlag = True
+>>>>>>> b78b8ac850eeeca99a303e56abf47cd5feffdfe9
 
     def setPumpButtonOnClick(self):
         self.pumpBox.setEnabled(False)
         self.pumpStateBox.setEnabled(False)
+<<<<<<< HEAD
         pump_switcher = PumpSwitcher(index=self.pumpBox.currentIndex()+1, expected=int(self.pumpStateBox.value()), sock=self.socket, ip_tx=self.tx_ip, port_tx=self.tx_port)
         self.sendersThreadPool.start(pump_switcher)
+=======
+        self.commsData.pumpId = self.pumpBox.currentIndex()
+        self.commsData.pumpStateToSet = self.pumpStateBox.value()
+        self.commsData.pumpSwitchFlag = True
+>>>>>>> b78b8ac850eeeca99a303e56abf47cd5feffdfe9
