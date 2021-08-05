@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         self.receiversThreadPool = QThreadPool()
 
         self.comms = None
-        self.communicate(ip_rx=config['UDP_rx']['ip'], port_rx=config['UDP_rx']['port'], ip_tx=config['UDP_tx']['ip'], port_tx=config['UDP_tx']['port'],buffer=len(list(config['labels'])), mechs=config['mechanisms'], status=config['basics']['Altitude'], last_ping=int(config['lastPing']))
+        self.communicate(ip_rx=config['UDP_rx']['ip'], port_rx=config['UDP_rx']['port'], ip_tx=config['UDP_tx']['ip'], port_tx=config['UDP_tx']['port'],buffer=len(list(config['labels'])), mechs=config['mechanisms'], status=config['basics']['Altitude'], last_ping_confirm=int(config['lastPing']))
 
         del config
 
@@ -98,8 +98,8 @@ class MainWindow(QMainWindow):
         file.write(data)
         file.close()
 
-    def communicate(self, ip_rx, port_rx, ip_tx, port_tx, mechs, status, buffer, last_ping):
-        self.comms = Communication(ip_rx=ip_rx, port_rx=port_rx, ip_tx=ip_tx, port_tx=port_tx, max_reps=10, mechanisms=mechs, state=status, max_command_time=20, buffer_len=buffer, last_ping_time=last_ping)
+    def communicate(self, ip_rx, port_rx, ip_tx, port_tx, mechs, status, buffer, last_ping_confirm):
+        self.comms = Communication(ip_rx=ip_rx, port_rx=port_rx, ip_tx=ip_tx, port_tx=port_tx, max_reps=10, mechanisms=mechs, state=status, max_command_time=20, buffer_len=buffer, last_confirmation_id=last_ping_confirm)
         self.comms.signals.input_list.connect(self.updateGUI)
         self.comms.signals.input_string.connect(self.printToFile)
         self.receiversThreadPool.start(self.comms)

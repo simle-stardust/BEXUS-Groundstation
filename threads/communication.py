@@ -15,15 +15,10 @@ class CommunicationSignals(QObject):
 
 class Communication(QRunnable):
 
-    def __init__(self, ip_rx, port_rx, ip_tx, port_tx, max_reps, max_command_time, buffer_len, last_ping_time, mechanisms, state):
+    def __init__(self, ip_rx, port_rx, ip_tx, port_tx, max_reps, max_command_time, buffer_len, last_confirmation_id , mechanisms, state):
         super(Communication, self).__init__()
 
         self.sock_rx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        print('vvvvvvvvvvvvvv')
-        print(ip_rx)
-        print('- - - - - - -')
-        print(port_rx)
-        print('vvvvvvvvvvvvvv')
         self.sock_rx.bind((ip_rx, int(port_rx)))
         self.sock_tx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -31,7 +26,8 @@ class Communication(QRunnable):
         self.port_tx = port_tx
 
         self.bufferLenght = buffer_len
-        self.lastPingTime = last_ping_time
+        self.lastConnectionConfirmedId = last_confirmation_id
+        self.lastReceivedPacket = time.time()
 
         self.signals = CommunicationSignals()
 
@@ -94,11 +90,13 @@ class Communication(QRunnable):
                         self.signals.input_list.emit(received_new_list)
                         self.signals.input_string.emit(self.buffer + "\r")
                     self.buffer=""
+                self.lastReceivedPacket = time.time()
 
             if self.commsData.pingOnce:
                 self.ping()
             if self.commsData.pingerFlag:
                 self.pinger()
+
 
             if received_new_list != received_last_list and len(received_new_list) == self.bufferLenght:
                 if self.commsData.stateSwitchFlag:
@@ -107,11 +105,11 @@ class Communication(QRunnable):
                     self.switchValve(received_new_list[int(self.mechanisms['Valves']['status'])])
                 if self.commsData.pumpSwitchFlag:
                     self.switchState(received_new_list[int(self.mechanisms['Valves']['status'])])
-                if int(received_new_list[int(self.lastPingTime)]) > 30:
+                if int(received_new_list[int(self.lastConnectionConfirmedId)]) > 30 or time.time() - self.lastReceivedPacket > 30 *1000:
                     self.commsData.isCommsOnline = False
                 else:
                     self.commsData.isCommsOnline = True
-
+        
                 self.signals.comms_data.emit(self.commsData)
 
             received_last_list = received_new_list
