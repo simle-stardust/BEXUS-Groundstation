@@ -105,7 +105,7 @@ class MainWindow(QMainWindow):
     def updateGUI(self, data):
         for widget in self.updatableWidgets:
             widget.updateGUI(data)
-        #print(self.receiversThreadPool.activeThreadCount())
+        print(self.receiversThreadPool.activeThreadCount())
 
     def printToFile(self, data):
         file = open(self.logFile, 'a+')

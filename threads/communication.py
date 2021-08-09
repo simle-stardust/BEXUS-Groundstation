@@ -5,25 +5,23 @@ from datetime import datetime
 
 from PyQt5.QtCore import QRunnable, pyqtSlot, QObject, pyqtSignal
 
-from threads.receivers import UDPlistener
-
-class Communication(QObject):
+class CommunicationSignals(QObject):
 
     input_list = pyqtSignal(list)
     input_string = pyqtSignal(str)
 
 
-class Communication(UDPlistener.UDPListener):
+class Communication(QRunnable):
 
     def __init__(self, sock_rx, sock_tx, ip_tx, port_tx, interval):
-        super(UDPlistener.UDPListener, self).__init__()
+        super(Communication, self).__init__()
 
         self.sock_rx = sock_rx
         self.sock_tx = sock_tx
         self.ip_tx = ip_tx 
         self.port_tx = port_tx
 
-        self.signals = UDPlistener.UDPListenerSignals()
+        self.signals = CommunicationSignals()
 
         self.pingerFlag = False
         self.stateSwitchFlag = False
@@ -61,8 +59,8 @@ class Communication(UDPlistener.UDPListener):
             received_new = self.sock_rx.recvfrom(1024)
 
             self.buffer = self.buffer + received_new[0].decode()
-            print(self.buffer)
-
+            #print(self.buffer)
+#
             if "@" in self.buffer and ";" in self.buffer:
 
                 received_new_list = list(self.buffer[self.buffer.find("@")+1 : self.buffer.find(";")].split(","))
@@ -70,10 +68,11 @@ class Communication(UDPlistener.UDPListener):
                     #error, flush the buffer up to "@"
                     self.buffer=self.buffer[self.buffer.find("@"):]
                 else:
-                    print(received_new_list)
+                    #print(received_new_list)
                     print(len(received_new_list))
                     # only update data when all required fields are present
                     if len(received_new_list) == 65:
+                        print(received_new_list)
                         self.signals.input_list.emit(self.createList(received_new_list))
                         self.signals.input_string.emit(self.buffer + "\r")
                     self.buffer=""

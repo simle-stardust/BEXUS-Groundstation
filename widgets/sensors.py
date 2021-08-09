@@ -26,7 +26,6 @@ class Sensors(QWidget):
 
         # MAIN LAYOUT
         self.layoutMain = QHBoxLayout()
-        self.layoutMain.addLayout(self.layoutMain)
 
         # LOYOUTS AND LABELS GENERATED IN ACCORDANCE WITH config.hjson
         self.objects = []
