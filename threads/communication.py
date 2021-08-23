@@ -5,6 +5,72 @@ from datetime import datetime
 
 from PyQt5.QtCore import QRunnable, pyqtSlot, QObject, pyqtSignal
 
+
+#2021/08/22,20_59_45,27.25,0,1013.73,1013.61,28.16,1,0.00,0.00,-50.00,0,0,0,0,0,0,0,2,3,1,24.30,50.80,4112,0.00,0.00,4112,0.00,0.00,3088,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0,0,0,4,0,0,0,0,0,0,0,0.00,0.00,0.00,49
+def convert_bin_uplink_to_old_csv(buf):
+    ret_str = ""
+
+    ret_str += str(int.from_bytes(buf[0:2], byteorder='little', signed=False)) + "/" #year
+    ret_str += str(int(buf[2])) + "/" #month
+    ret_str += str(int(buf[3])) + "," #day
+    ret_str += str(int(buf[4])) + "_" #hour
+    ret_str += str(int(buf[5])) + "_" #minute
+    ret_str += str(int(buf[6])) + "," #second
+
+    ret_str += str(float(int.from_bytes(buf[7:11], byteorder='little', signed=True))/100.0) + "," #rtc temp
+    ret_str += str(int.from_bytes(buf[11:13], byteorder='little', signed=False)) + "," #isDateTimeValid
+
+    ret_str += str(float(int.from_bytes(buf[13:17], byteorder='little', signed=True))/100.0) + "," #pressure(1)
+    ret_str += str(float(int.from_bytes(buf[17:21], byteorder='little', signed=True))/100.0) + "," #average pressure(1)
+    ret_str += str(float(int.from_bytes(buf[21:25], byteorder='little', signed=True))/100.0) + "," #pressure temp(1)
+    ret_str += str(int(buf[25])) + "," #pressure(1).isValid
+
+    ret_str += str(float(int.from_bytes(buf[26:30], byteorder='little', signed=True))/100.0) + "," #pressure(2)
+    ret_str += str(float(int.from_bytes(buf[30:34], byteorder='little', signed=True))/100.0) + "," #average pressure(2)
+    ret_str += str(float(int.from_bytes(buf[34:38], byteorder='little', signed=True))/100.0) + "," #pressure temp(2)
+    ret_str += str(int(buf[38])) + "," #pressure(2).isValid
+
+    ret_str += str(int.from_bytes(buf[39:43], byteorder='little', signed=True)) + "," #alt
+    ret_str += str(int.from_bytes(buf[43:47], byteorder='little', signed=True)) + "," #avg alt
+    ret_str += str(int(buf[47])) + "," #alt isValid
+
+    ret_str += str(int.from_bytes(buf[48:52], byteorder='little', signed=True)) + "," #alt(1)
+    ret_str += str(int.from_bytes(buf[52:56], byteorder='little', signed=True)) + "," #avg alt
+    ret_str += str(int(buf[56])) + "," #alt isValid
+
+    ret_str += str(int.from_bytes(buf[57:61], byteorder='little', signed=True)) + "," #alt(2)
+    ret_str += str(int.from_bytes(buf[61:65], byteorder='little', signed=True)) + "," #avg alt
+    ret_str += str(int(buf[65])) + "," #alt isValid
+
+    ret_str += str(float(int.from_bytes(buf[66:70], byteorder='little', signed=True))/100.0) + "," #DHT22 temp
+    ret_str += str(float(int.from_bytes(buf[70:74], byteorder='little', signed=True))/100.0) + "," #DHT22 hum
+    ret_str += str(int.from_bytes(buf[74:76], byteorder='little', signed=False)) + "," #DHT22 Status
+    ret_str += str(float(int.from_bytes(buf[76:80], byteorder='little', signed=True))/100.0) + "," #DHT22 temp
+    ret_str += str(float(int.from_bytes(buf[80:84], byteorder='little', signed=True))/100.0) + "," #DHT22 hum
+    ret_str += str(int.from_bytes(buf[84:86], byteorder='little', signed=False)) + "," #DHT22 Status
+    ret_str += str(float(int.from_bytes(buf[86:90], byteorder='little', signed=True))/100.0) + "," #DHT22 temp
+    ret_str += str(float(int.from_bytes(buf[90:94], byteorder='little', signed=True))/100.0) + "," #DHT22 hum
+    ret_str += str(int.from_bytes(buf[94:96], byteorder='little', signed=False)) + "," #DHT22 Status
+
+    for i in range(20):
+        # 20x DS18B20 temps
+        ret_str += str(float(int.from_bytes(buf[96 + (i*4):100 + (i*4)], byteorder='little', signed=True))/100.0) + ","
+
+    ret_str += str(int.from_bytes(bytes(buf[176]), byteorder='little', signed=False)) + "," #pump pwm 1
+    ret_str += str(int.from_bytes(bytes(buf[177]), byteorder='little', signed=False)) + "," #pump pwm 2
+    ret_str += str(int.from_bytes(bytes(buf[178]), byteorder='little', signed=False)) + "," #heating pwm
+    ret_str += str(int.from_bytes(buf[179:181], byteorder='little', signed=False)) + "," #phase    
+    
+    for i in range(7):
+        ret_str += str(int(buf[181+i])) + ","
+
+    ret_str += str(float(int.from_bytes(buf[188:192], byteorder='little', signed=True))/100.0) + "," #ADC0
+    ret_str += str(float(int.from_bytes(buf[192:196], byteorder='little', signed=True))/100.0) + "," #ADC1
+    ret_str += str(float(int.from_bytes(buf[196:200], byteorder='little', signed=True))/100.0) + "," #ADC2
+    ret_str += str(int.from_bytes(buf[200:204], byteorder='little', signed=False)) #time since last ping
+
+    return ret_str
+
 class CommunicationSignals(QObject):
 
     input_list = pyqtSignal(list)
@@ -49,7 +115,6 @@ class Communication(QRunnable):
         self.pumpStateToSet = None
         self.currenPumpState = None
 
-        self.buffer = ""
 
     @pyqtSlot()
     def run(self):
@@ -58,24 +123,43 @@ class Communication(QRunnable):
         while True:
             received_new = self.sock_rx.recvfrom(1024)
 
-            self.buffer = self.buffer + received_new[0].decode()
-            #print(self.buffer)
-#
-            if "@" in self.buffer and ";" in self.buffer:
+            #only on Windows
+            received_new = received_new[0]
 
-                received_new_list = list(self.buffer[self.buffer.find("@")+1 : self.buffer.find(";")].split(","))
-                if len(received_new_list) == 1:
-                    #error, flush the buffer up to "@"
-                    self.buffer=self.buffer[self.buffer.find("@"):]
+            #print(received_new)
+            print(len(received_new))
+
+            # change below length if modifying payload
+            if (len(received_new) == 204):
+                str_csv = convert_bin_uplink_to_old_csv(received_new)
+                received_new_list = list(str_csv.split(","))
+                print(received_new_list)
+                print(len(received_new_list))
+                if len(received_new_list) == 65:
+                    print(received_new_list)
+                    self.signals.input_list.emit(self.createList(received_new_list))
+                    self.signals.input_string.emit(str_csv + "\r")
+                    print("ok")
                 else:
-                    #print(received_new_list)
-                    print(len(received_new_list))
-                    # only update data when all required fields are present
-                    if len(received_new_list) == 65:
-                        print(received_new_list)
-                        self.signals.input_list.emit(self.createList(received_new_list))
-                        self.signals.input_string.emit(self.buffer + "\r")
-                    self.buffer=""
+                    print("something went wrong, print to error log file")
+            else:
+                print("wrong length, print to error log file")
+#
+        #   if "@" in self.buffer and ";" in self.buffer:
+
+        #       received_new_list = list(self.buffer[self.buffer.find("@")+1 : self.buffer.find(";")].split(","))
+        #       if len(received_new_list) == 1:
+        #           #error, flush the buffer up to "@"
+        #           self.buffer=self.buffer[self.buffer.find("@"):]
+        #       else:
+        #           #print(received_new_list)
+        #           print(len(received_new_list))
+        #           # only update data when all required fields are present
+        #           if len(received_new_list) == 65:
+        #               print(received_new_list)
+        #               self.signals.input_list.emit(self.createList(received_new_list))
+        #               self.signals.input_string.emit(self.buffer + "\r")
+        #           self.buffer=""
 
             if self.pingerFlag:
                 self.ping()
