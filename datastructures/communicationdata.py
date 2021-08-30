@@ -6,6 +6,7 @@ class CommunicationData:
     stateSwitchFlag: bool
     valveSwitchFlag: bool
     pumpSwitchFlag: bool
+    heaterSwitchFlag: bool
 
     isCommsOnline: bool
 
@@ -21,6 +22,10 @@ class CommunicationData:
     pumpId: int
     pumpStateToSet: int
 
+    heaterId: int
+    heaterStateToSet: int
+
     stateSwitchStartedAt: float
     valveSwitchStartedAt: float
     pumpSwitchStartedAt: float
+    heaterSwitchStartedAt: float

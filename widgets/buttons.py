@@ -8,7 +8,7 @@ from datastructures.communicationdata import CommunicationData
 
 class Buttons(QWidget):
 
-    def __init__(self, *args, phases, valves, valvestatuses, pumps, **kwargs):
+    def __init__(self, *args, phases, valves, valvestatuses, pumps, heaters, **kwargs):
         super(Buttons, self).__init__(*args, **kwargs)
 
         self.fontTitle = QLabel().font()
@@ -78,6 +78,26 @@ class Buttons(QWidget):
         self.layoutSetterPump.addWidget(self.setPumpButton)
         self.layoutSetters.addLayout(self.layoutSetterPump)
 
+        self.layoutSetterHeater = QVBoxLayout()
+        self.layoutSetterHeater.setAlignment(Qt.AlignTop)
+        self.labelHeater = QLabel("Heaters")
+        self.labelHeater.setFont(self.fontTitle)
+        self.labelHeater.setAlignment(Qt.AlignCenter)
+        self.layoutSetterHeater.addWidget(self.labelHeater)
+        self.heaterBox = QComboBox()
+        self.layoutSetterHeater.addWidget(self.heaterBox)
+        self.heaterStateBox = QDoubleSpinBox()
+        self.heaterStateBox.setMaximum(255)
+        self.layoutSetterHeater.addWidget(self.heaterStateBox)
+        self.setHeaterButton = QPushButton("SET")
+        for heater in heaters:
+            self.heaterBox.addItem(heater)
+
+        self.setHeaterButton.clicked.connect(self.setHeaterButtonOnClick)
+
+        self.layoutSetterHeater.addWidget(self.setHeaterButton)
+        self.layoutSetters.addLayout(self.layoutSetterHeater)
+
         self.layoutPinger = QVBoxLayout()
         self.layoutPinger.setAlignment(Qt.AlignCenter)
         self.layoutP1 = QHBoxLayout()
@@ -121,17 +141,21 @@ class Buttons(QWidget):
                                            stateSwitchFlag=False,
                                            valveSwitchFlag=False,
                                            pumpSwitchFlag=False,
-                                           isCommsOnline=False,
+                                           heaterSwitchFlag=False,
                                            pingOnce=False,
+                                           isCommsOnline=False,
                                            pingInterval=0,
                                            stateToSet=0,
                                            valveId=0,
                                            valveStateToSet=0,
                                            pumpId=0,
+                                           heaterId=0,
                                            pumpStateToSet=0,
+                                           heaterStateToSet=0,
                                            stateSwitchStartedAt=0,
                                            valveSwitchStartedAt=0,
-                                           pumpSwitchStartedAt=0)
+                                           pumpSwitchStartedAt=0,
+                                           heaterSwitchStartedAt=0)
 
     def updateGUI(self, new_comms_data):
         if self.commsData.isCommsOnline != new_comms_data.isCommsOnline:
@@ -182,3 +206,10 @@ class Buttons(QWidget):
         self.commsData.pumpId = self.pumpBox.currentIndex()
         self.commsData.pumpStateToSet = self.pumpStateBox.value()
         self.commsData.pumpSwitchFlag = True
+
+    def setHeaterButtonOnClick(self):
+        self.heaterBox.setEnabled(False)
+        self.heaterStateBox.setEnabled(False)
+        self.commsData.heaterId = self.heaterBox.currentIndex()
+        self.commsData.heaterStateToSet = self.heaterStateBox.value()
+        self.commsData.heaterSwitchFlag = True

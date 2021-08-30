@@ -157,10 +157,20 @@
       "control signal": [
         50,
         51
-      ]
+      ],
       "measured signal": [
         61,
         62
+      ]
+    },
+    "Heaters": {
+      "name": [
+        "h1",
+        "h2"
+      ],
+      "power": [
+        101,
+        102
       ]
     }
   },
