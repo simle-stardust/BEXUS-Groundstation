@@ -65,6 +65,7 @@
     "Heaters sig",
     "P#2 meas sig",
     "P#1 meas sig",
+    "Voltage in",
     "Time since ping"
   ],
   #Basic information display

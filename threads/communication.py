@@ -67,7 +67,8 @@ def convert_bin_uplink_to_old_csv(buf):
     ret_str += str(float(int.from_bytes(buf[188:192], byteorder='little', signed=True))/100.0) + "," #ADC0
     ret_str += str(float(int.from_bytes(buf[192:196], byteorder='little', signed=True))/100.0) + "," #ADC1
     ret_str += str(float(int.from_bytes(buf[196:200], byteorder='little', signed=True))/100.0) + "," #ADC2
-    ret_str += str(int.from_bytes(buf[200:204], byteorder='little', signed=False)) #time since last ping
+    ret_str += str(float(int.from_bytes(buf[200:204], byteorder='little', signed=True))/100.0) + "," #ADC3
+    ret_str += str(int.from_bytes(buf[204:208], byteorder='little', signed=False)) #time since last ping
 
     return ret_str
 
@@ -130,7 +131,7 @@ class Communication(QRunnable):
             print(len(received_new))
 
             # change below length if modifying payload
-            if (len(received_new) == 204):
+            if (len(received_new) == 208):
                 str_csv = convert_bin_uplink_to_old_csv(received_new)
                 received_new_list = list(str_csv.split(","))
                 print(received_new_list)
