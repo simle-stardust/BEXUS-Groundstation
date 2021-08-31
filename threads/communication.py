@@ -102,7 +102,7 @@ class Communication(QRunnable):
         self.valveSwitchRepetitions = 0
         self.pumpSwitchRepetitions = 0
 
-        self.maxRepetitions = 10
+        self.maxRepetitions = 1
 
         self.stateToSet = None
         self.currentState = None
@@ -113,7 +113,7 @@ class Communication(QRunnable):
 
         self.pumpId = None
         self.pumpStateToSet = None
-        self.currenPumpState = None
+        self.currentPumpState = None
 
 
     @pyqtSlot()
@@ -181,19 +181,19 @@ class Communication(QRunnable):
     
     def switchState(self):
         self.sock_tx.sendto(bytes('setState_' + str(self.stateToSet), encoding='utf8'), (self.ip_tx, self.port_tx))
-        if self.stateToSet != self.currentState or self.stateSwitchRepetitions <= self.maxRepetitions:
+        if self.stateToSet != self.currentState or self.stateSwitchRepetitions < self.maxRepetitions:
             self.stateSwitchFlag = False
             self.stateSwitchRepetitions = 0
 
     def switchValve(self):
         self.sock_tx.sendto(bytes('setValve_' + str(self.valveId) + str(self.valveStateToSet), encoding='utf8'), (self.ip_tx, self.port_tx))
-        if self.valveStateToSet != self.currentValveState or self.valveSwitchRepetitions <= self.maxRepetitions:
+        if self.valveStateToSet != self.currentValveState or self.valveSwitchRepetitions < self.maxRepetitions:
             self.valveSwitchFlag = False
             self.valveSwitchRepetitions = 0
             
     def switchPump(self):
         self.sock_tx.sendto(bytes('setPump_' + str(self.pumpId) + '_' + str(self.pumpStateToSet), encoding='utf8'), (self.ip_tx, self.port_tx))
-        if self.pumpStateToSet != self.currentPumpState or self.pumpSwitchRepetitions <= self.maxRepetitions:
+        if self.pumpStateToSet != self.currentPumpState or self.pumpSwitchRepetitions < self.maxRepetitions:
             self.pumpSwitchFlag = False
             self.pumpSwitchRepetitions = 0
 

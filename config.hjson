@@ -62,9 +62,9 @@
     "Valve 5 state",
     "Valve 6 state",
     "Valve 7 state",
-    "P#1 meas sig",
-    "P#2 meas sig",
     "Heaters sig",
+    "P#2 meas sig",
+    "P#1 meas sig",
     "Time since ping"
   ],
   #Basic information display
@@ -151,16 +151,19 @@
     },
     "Pumps": {
       "name": [
-        "p1",
-        "p2"
+        "pump1",
+        "pump2",
+        "heaters"
         ],
-      "control signal": [
-        50,
-        51
-      ]
       "measured signal": [
-        61,
-        62
+        63,
+        62,
+        61
+      ],
+      "control signal": [
+        52,
+        51,
+        50
       ]
     }
   },

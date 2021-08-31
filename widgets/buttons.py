@@ -107,6 +107,7 @@ class Buttons(QWidget):
         self.layoutP3.addWidget(self.labelAutoPing1)
         self.intervalBox = QDoubleSpinBox()
         self.intervalBox.setMinimum(1)
+        self.intervalBox.setValue(5)
         self.layoutP3.addWidget(self.intervalBox)
         self.labelAutoPing2 = QLabel(" intervals")
         self.layoutP3.addWidget(self.labelAutoPing2)
