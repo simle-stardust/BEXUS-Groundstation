@@ -65,7 +65,7 @@ class Buttons(QWidget):
 
         self.layoutSetterPump = QVBoxLayout()
         self.layoutSetterPump.setAlignment(Qt.AlignTop)
-        self.labelPump = QLabel("Pumps")
+        self.labelPump = QLabel("PWMs")
         self.labelPump.setFont(self.fontTitle)
         self.labelPump.setAlignment(Qt.AlignCenter)
         self.layoutSetterPump.addWidget(self.labelPump)

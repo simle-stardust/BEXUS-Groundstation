@@ -136,7 +136,7 @@ class Communication(QRunnable):
                 received_new_list = list(str_csv.split(","))
                 print(received_new_list)
                 print(len(received_new_list))
-                if len(received_new_list) == 65:
+                if len(received_new_list) == 66:
                     print(received_new_list)
                     self.signals.input_list.emit(self.createList(received_new_list))
                     self.signals.input_string.emit(str_csv + "\r")
