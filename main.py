@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
         self.resize(1000, 600)
 
         self.logFile = 'logs/StardustGroundStation' + str(date.today()) + '.txt'
+        self.logErrorFile = 'logs/StardustGroundStation' + str(date.today()) + '_error.txt'
 
         with open("config.hjson", "r") as file:
             config = hjson.load(file)
@@ -118,7 +119,7 @@ class MainWindow(QMainWindow):
         self.receiversThreadPool.start(tester)
 
     def communicate(self):
-        comms = Communication(self.sock_rx, self.sock_tx, self.ip_tx, self.port_tx, 60)
+        comms = Communication(self.sock_rx, self.sock_tx, self.ip_tx, self.port_tx, 60, self.logErrorFile)
         comms.signals.input_list.connect(self.updateGUI)
         comms.signals.input_string.connect(self.printToFile)
         self.receiversThreadPool.start(comms)

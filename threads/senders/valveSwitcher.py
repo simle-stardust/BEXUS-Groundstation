@@ -19,7 +19,7 @@ class ValveSwitcher(QRunnable):
 
     @pyqtSlot()
     def run(self):
-        while self.valveStateToSet != self.currentValveState and self.repetitions <= 10:
+        while self.valveStateToSet != self.currentValveState and self.repetitions <= 1:
             self.socket.sendto(bytes('setValve_' + str(self.valveId) + '_' + str(self.valveStateToSet), encoding='utf8'), (self.ip_tx, self.port_tx))
             print('setValve_' + str(self.valveId) + '_' + str(self.valveStateToSet))
             self.repetitions += 1

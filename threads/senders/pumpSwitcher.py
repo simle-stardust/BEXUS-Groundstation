@@ -19,7 +19,7 @@ class PumpSwitcher(QRunnable):
 
     @pyqtSlot()
     def run(self):
-        while self.pumpStateToSet != self.currentPumpState and self.repetitions <= 10:
+        while self.pumpStateToSet != self.currentPumpState and self.repetitions < 1:
             self.socket.sendto(bytes('setPump_' + str(self.pumpId) + '_' + str(self.pumpStateToSet), encoding='utf8'), (self.ip_tx, self.port_tx))
             print('setPump_' + str(self.pumpId) + "_" + str(self.pumpStateToSet))
             self.repetitions += 1

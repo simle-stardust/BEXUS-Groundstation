@@ -66,7 +66,8 @@
     "P#2 meas sig",
     "P#1 meas sig",
     "Voltage in",
-    "Time since ping"
+    "Time since ping",
+    "SD error"
   ],
   #Basic information display
   "basics":
@@ -200,11 +201,11 @@
   },
   #Phases of the experiment:
   "phases":[
-    "debug/before flight",
-    "start phase",
-    "in flight",
-    "experiment phase",
-    "experiment ended"
+    "PRE-LAUNCH",
+    "FLIGHT: BEFORE SAMPLING",
+    "FLIGHT: SAMPLING",
+    "FLIGHT: AFTER SAMPLING",
+    "POST-FLIGHT"
   ],
   #Which elements to load?
   "table" : true,

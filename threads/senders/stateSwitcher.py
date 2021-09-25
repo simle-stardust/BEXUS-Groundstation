@@ -18,7 +18,7 @@ class StateSwitcher(QRunnable):
 
     @pyqtSlot()
     def run(self):
-        while self.stateToSet != self.currentState and self.repetitions <= 10:
+        while self.stateToSet != self.currentState and self.repetitions < 1:
             self.socket.sendto(bytes('setState_' + str(self.stateToSet), encoding='utf8'), (self.ip_tx, self.port_tx))
             print('setState_' + str(self.stateToSet))
             self.repetitions += 1

@@ -56,9 +56,9 @@ def convert_bin_uplink_to_old_csv(buf):
         # 20x DS18B20 temps
         ret_str += str(float(int.from_bytes(buf[96 + (i*4):100 + (i*4)], byteorder='little', signed=True))/100.0) + ","
 
-    ret_str += str(int.from_bytes(bytes(buf[176]), byteorder='little', signed=False)) + "," #pump pwm 1
-    ret_str += str(int.from_bytes(bytes(buf[177]), byteorder='little', signed=False)) + "," #pump pwm 2
-    ret_str += str(int.from_bytes(bytes(buf[178]), byteorder='little', signed=False)) + "," #heating pwm
+    ret_str += str(buf[176]) + "," #pump pwm 1
+    ret_str += str(buf[177]) + "," #pump pwm 2
+    ret_str += str(buf[178]) + "," #heating pwm
     ret_str += str(int.from_bytes(buf[179:181], byteorder='little', signed=False)) + "," #phase    
     
     for i in range(7):
@@ -68,7 +68,8 @@ def convert_bin_uplink_to_old_csv(buf):
     ret_str += str(float(int.from_bytes(buf[192:196], byteorder='little', signed=True))/100.0) + "," #ADC1
     ret_str += str(float(int.from_bytes(buf[196:200], byteorder='little', signed=True))/100.0) + "," #ADC2
     ret_str += str(float(int.from_bytes(buf[200:204], byteorder='little', signed=True))/100.0) + "," #ADC3
-    ret_str += str(int.from_bytes(buf[204:208], byteorder='little', signed=False)) #time since last ping
+    ret_str += str(int.from_bytes(buf[204:208], byteorder='little', signed=False)) + "," #time since last ping
+    ret_str += str(buf[208]) #sd card status
 
     return ret_str
 
@@ -80,7 +81,7 @@ class CommunicationSignals(QObject):
 
 class Communication(QRunnable):
 
-    def __init__(self, sock_rx, sock_tx, ip_tx, port_tx, interval):
+    def __init__(self, sock_rx, sock_tx, ip_tx, port_tx, interval, err_file):
         super(Communication, self).__init__()
 
         self.sock_rx = sock_rx
@@ -116,6 +117,8 @@ class Communication(QRunnable):
         self.pumpStateToSet = None
         self.currentPumpState = None
 
+        self.err_file = err_file
+
 
     @pyqtSlot()
     def run(self):
@@ -131,20 +134,22 @@ class Communication(QRunnable):
             print(len(received_new))
 
             # change below length if modifying payload
-            if (len(received_new) == 208):
+            if (len(received_new) == 209):
                 str_csv = convert_bin_uplink_to_old_csv(received_new)
                 received_new_list = list(str_csv.split(","))
                 print(received_new_list)
                 print(len(received_new_list))
-                if len(received_new_list) == 66:
+                if len(received_new_list) == 67:
                     print(received_new_list)
                     self.signals.input_list.emit(self.createList(received_new_list))
                     self.signals.input_string.emit(str_csv + "\r")
                     print("ok")
                 else:
                     print("something went wrong, print to error log file")
+                    self.printToErrFile(received_new)
             else:
                 print("wrong length, print to error log file")
+                self.printToErrFile(received_new)
 #
         #   if "@" in self.buffer and ";" in self.buffer:
 
@@ -218,3 +223,15 @@ class Communication(QRunnable):
         list_to_convert[1] = dt.timestamp()
 
         return list_to_convert
+
+    def printToErrFile(self, data):
+        file = open(self.err_file, 'a+')
+
+        file.write(str(datetime.now()) + " : ")
+
+        for i in range(len(data)):
+            file.write(hex(data[i]) + " ")
+
+        file.write("\n")
+
+        file.close()
