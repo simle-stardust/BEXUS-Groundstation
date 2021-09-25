@@ -151,7 +151,7 @@
         60
         ]
     },
-    "Pumps": {
+    "PWMs": {
       "name": [
         "pump1",
         "pump2",
