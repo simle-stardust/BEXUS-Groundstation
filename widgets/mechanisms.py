@@ -40,8 +40,8 @@ class Mechanisms(QWidget):
 
         #Scheme
         self.schemeLbl = QLabel()
-        self.schemeImg = QPixmap('images/scheme.png')
-        self.schemeImg = self.schemeImg.scaled(250, 250, QtCore.Qt.KeepAspectRatio)
+        self.schemeImg = QPixmap('images/scheme.jpg')
+        self.schemeImg = self.schemeImg.scaled(500, 500, QtCore.Qt.KeepAspectRatio)
         self.schemeLbl.setPixmap(self.schemeImg)
         self.layoutMain.addWidget(self.schemeLbl)
 
