@@ -19,9 +19,12 @@ class Table(QWidget):
         self.setLayout(self.layout)
 
     def updateGUI(self, data):
+
+        if self.maxSize != 0 and self.table.rowCount() >= self.maxSize:
+            self.table.removeRow(self.table.rowCount() - 1)
         self.table.insertRow(0)
+        self.table.selectRow(0)
         for i in range(len(data)):
-            #self.table.setItem(0, i, QTableWidgetItem(str(data[i])))
             if i == 0: # special treatment for timestamp
                 data_to_input = datetime.utcfromtimestamp(int(data[i])).strftime('%Y-%m-%d')
             elif i == 1:
@@ -31,5 +34,3 @@ class Table(QWidget):
             
             self.table.setItem(0, i, QTableWidgetItem(str(data_to_input)))
 
-            if self.maxSize != 0 and self.table.rowCount() > self.maxSize:
-                self.table.removeRow(self.table.rowCount() - 1)
