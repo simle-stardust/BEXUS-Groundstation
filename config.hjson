@@ -75,6 +75,8 @@
     #Do not change name of these!
     "Altitude" : 12,
     "phase" : 53,
+    "ping": 65,
+    "voltage": 64,
     "time" : 1
   },
   #Data structure for sensors readings display:
@@ -186,6 +188,14 @@
     "altitude" : {
       "name" : "meters",
       "symbol" : "m"
+    },
+    "ping" : {
+      "name" : "seconds",
+      "symbol" : "s"
+    },
+    "voltage" : {
+      "name" : "volt",
+      "symbol" : "V"
     }
   },
   #Please, keep the pattern and name categories exactly the same (except case, because it is case insensitive) as in mechanisms data structure above!
