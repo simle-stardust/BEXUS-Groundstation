@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
             self.tabsBottom.addTab(self.table, 'Table')
         if config['charts']:
             self.charts = Charts(structure=config['sensors'], units=config['units'],
-                                 time_index=config['basics'][list(config['basics'].keys())[2]])
+                                 time_index=config['basics']['time'])
             self.updatableWidgets.append(self.charts)
             self.scrollCharts = QScrollArea()
             self.scrollCharts.setWidgetResizable(True)
