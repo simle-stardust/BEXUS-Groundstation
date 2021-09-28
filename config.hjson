@@ -83,23 +83,37 @@
   "sensors":
   {
     #Change anything you want but keep the pattern!
+    "Altitude": {
+      "names": [
+        "GPS",
+        "Pressure #1",
+        "Pressure #2"
+      ],
+      "current": [
+        12,
+        15,
+        18
+      ],
+      "average": [
+        13,
+        16,
+        19
+      ]
+    },
     "Temperature": {
       "names": [
         "RTC temp",
         "Ext press",
         "Int press",
         "Ext DHT22",
-        "Int DHT22",
-        "Mech DHT22"
-        # TODO: Add ds18b20??
+        "Int DHT22"
         ],
       "current": [
         2,
         6,
         10,
         24,
-        21,
-        27
+        21
         ]
     },
     "Pressure": {
@@ -119,15 +133,13 @@
     "Humidity": {
       "names": [
         "Ext DHT22",
-        "Int DHT22",
-        "Mech DHT22"
+        "Int DHT22"
       ],
       "current": [
         25,
-        22,
-        28
+        22
       ]
-    }
+    },
   },
   #Data structure for mechanisms statuses display:
   "mechanisms":
