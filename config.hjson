@@ -140,6 +140,20 @@
         22
       ]
     },
+    "Power": {
+      "names": [
+        "Voltage",
+        "Pump #1",
+        "Pump #2",
+        "Heating"
+      ],
+      "current": [
+        64,
+        63,
+        62,
+        61
+      ]
+    },
   },
   #Data structure for mechanisms statuses display:
   "mechanisms":
@@ -208,6 +222,10 @@
     "voltage" : {
       "name" : "volt",
       "symbol" : "V"
+    },
+    "power" : {
+      "name" : "",
+      "symbol" : ""
     }
   },
   #Please, keep the pattern and name categories exactly the same (except case, because it is case insensitive) as in mechanisms data structure above!
