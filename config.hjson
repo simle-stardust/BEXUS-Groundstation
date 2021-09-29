@@ -5,23 +5,23 @@
     "RTC time",
     "RTC temp",
     "RTC code",
-    "Ext press val",
-    "Ext press avg",
-    "Ext press temp",
-    "Ext press flag",
     "Int press val",
     "Int press avg",
     "Int press temp",
     "Int press flag",
+    "Ext press val",
+    "Ext press avg",
+    "Ext press temp",
+    "Ext press flag",
     "GPS alt",
     "GPS alt avg",
     "GPS flal",
-    "Alt ext press",
-    "Alt ext press avg",
-    "Alt ext press flag",
     "Alt int press",
     "Alt int press avg",
     "Alt int press flag",
+    "Alt ext press",
+    "Alt ext press avg",
+    "Alt ext press flag",
     "Int DHT22 temp",
     "Int DHT22 hum",
     "Int DHT22 err",
@@ -103,8 +103,8 @@
     "Temperature": {
       "names": [
         "RTC temp",
-        "Ext press",
         "Int press",
+        "Ext press",
         "Ext DHT22",
         "Int DHT22"
         ],
@@ -118,8 +118,8 @@
     },
     "Pressure": {
       "name": [
-        "Internal",
-        "External"
+        "External",
+        "Internal"
         ],
       "current": [
         8,
@@ -235,7 +235,7 @@
   "console" : true,
   "buttons" : true,
   #What is the maximum size of the table? (0 = unlimited)
-  "maxSize" : 1000,
+  "maxSize" : 0,
   #Network configuration:
   "UDP_rx": {
   "ip" : "172.16.18.190",

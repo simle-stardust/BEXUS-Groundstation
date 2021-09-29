@@ -5,7 +5,7 @@ import pyqtgraph as pg
 
 class Charts(QWidget):
 
-    def __init__(self, *args, structure, units, time_index, **kwargs):
+    def __init__(self, *args, structure, units, time_index, max_size, **kwargs):
         super(Charts, self).__init__(*args, **kwargs)
 
         # MAIN LAYOUT
@@ -27,13 +27,14 @@ class Charts(QWidget):
         self.time = [0]
         self.timeAvg = [0]
         self.timeIndex = time_index
+        self.maxSize = max_size
 
         # CHARTS GENERATED IN ACCORDANCE WITH config.hjson
         for p in range(len(self.primaryKeys)):
             self.secondaryKeys = list(structure[self.primaryKeys[p]].keys())
             for s in range(len(structure[self.primaryKeys[p]][self.secondaryKeys[0]])):
                 self.plotWidgets.append(PlotWidget())
-                self.plotWidgets[-1].setMinimumSize(0, 200)
+                self.plotWidgets[-1].setMinimumSize(0, 400)
                 self.plotWidgets[-1].setMouseEnabled(False, False)
                 self.plotWidgets[-1].setTitle(
                     self.primaryKeys[p] + ' ' + structure[self.primaryKeys[p]][self.secondaryKeys[0]][s])
@@ -79,8 +80,9 @@ class Charts(QWidget):
 
         # cutting out excess of chart
         t = len(self.time)
-        w = self.geometry().width() / 3
-        if t > w:
+        #w = self.geometry().width() / 3
+        w = self.maxSize
+        if t > w and w != 0:
             r = int(abs(t - w))
             for _ in range(r):
                 for i in range(len(self.data)):
