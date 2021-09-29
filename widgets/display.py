@@ -89,7 +89,7 @@ class Display(QWidget):
 
         #EXPERIMENT PHAZE
         #creating label:
-        self.labelPhaze = QLabel("Placeholder_Phase ")
+        self.labelPhaze = QLabel("NO CONNECTION ")
         self.labelPhaze.setAlignment(Qt.AlignRight)
         self.labelPhaze.setFont(self.fontPhaze)
         self.layoutComponentsTop.addWidget(self.labelPhaze)
